@@ -1,22 +1,27 @@
-from mcp.client import Client
-from openai import OpenAI
+import asyncio
+from mcp.client.session import ClientSession
+from mcp.client.stdio import stdio_client, StdioServerParameters
 
-# Connect to MCP server
-client = Client()
-client.connect("log-file-analyzer")
 
-# Initialize LLM
-llm = OpenAI()
+async def main():
+    server_params = StdioServerParameters(
+        command="python",
+        args=["../server/mcp_server.py"]
+    )
+    
+    async with stdio_client(server_params) as (read, write):
+        async with ClientSession(read, write) as session:
+            await session.initialize()
 
-# Ask a question
-question = "Explain the errors in the log file app.log"
+            # Call the read_log_file tool with correct filename
+            result = await session.call_tool(
+                "read_log_file",
+                {"filename": "app.log"}  # Changed from "sample.log" to "app.log"
+            )
 
-# Run MCP + LLM
-response = client.run(
-    llm=llm,
-    prompt=question,
-    tools=["read_log_file"]
-)
+            print("Tool response:")
+            print(result.content[0].text)
 
-print("\n--- AI RESPONSE ---\n")
-print(response)
+
+if __name__ == "__main__":
+    asyncio.run(main())
