@@ -1,0 +1,2 @@
+# Requirements for MCP File Upload & Reader Application
+mcp>=1.0.0

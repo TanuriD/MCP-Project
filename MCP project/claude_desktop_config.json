@@ -1,0 +1,10 @@
+{
+  "mcpServers": {
+    "fileServer": {
+      "command": "python",
+      "args": ["file_server.py"],
+      "cwd": "c:\\Users\\Admin\\Desktop\\MCP project",
+      "env": {}
+    }
+  }
+}
